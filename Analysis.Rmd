@@ -1,0 +1,71 @@
+---
+title: "Analysis"
+author: "Ferris"
+date: "04/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Data
+
+```{r read}
+Sequences <- read.csv("~/Desktop/432 Github/Rentrez/Sequences.csv")
+```
+
+## GC content analysis
+
+
+
+```{r analysis}
+#initialize ATCG vectors
+a <- 1:3
+t <- 1:3
+c <- 1:3
+g <- 1:3
+count <- data.frame(Sequences$Name, a, t, c, g, stringsAsFactors = FALSE)
+
+#fill vectors with nucleotide count
+for (r in 1:nrow(count)){
+count$a[r] <- nchar(gsub("T|G|C","", Sequences$Sequence[r]))
+count$t[r] <- nchar(gsub("A|G|C","", Sequences$Sequence[r]))
+count$c[r] <- nchar(gsub("A|G|T","", Sequences$Sequence[r]))
+count$g[r] <- nchar(gsub("A|T|C","", Sequences$Sequence[r]))
+}
+
+print(Sequences$Sequence)
+
+library(knitr)
+kable(count)
+```
+
+
+## Image of the bacteria Borrelia burgdorferi
+
+![](image/borrelia-burgdorferi.jpg)
+
+
+## For more information
+
+{r} [Here's the wikipedia page on Borrelia burgdorferi ](https://en.wikipedia.org/wiki/Borrelia_burgdorferi)
+
+```{r GC content}
+
+library(dplyr)
+
+count <- count %>% 
+  mutate(GCpct = (sum(sum(c)+sum(g))/sum(sum(a)+sum(c)+sum(t)+sum(g))*100))
+
+#make a table of only ID and GC %
+table <- count %>% 
+  select(c("Sequences.Name","GCpct"))
+
+#clean it up
+colnames(table) <- c("Sequence ID", "GC Content (%)")
+table$`Sequence ID` <- gsub("(.*)(HQ\\w+.1)(.*)","\\2",table$`Sequence ID`)
+table$`GC Content (%)` <- round(table$`GC Content (%)`)
+
+
+kable(table)
