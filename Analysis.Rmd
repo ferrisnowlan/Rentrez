@@ -69,3 +69,16 @@ table$`GC Content (%)` <- round(table$`GC Content (%)`)
 
 
 kable(table)
+```
+
+## Part 2
+
+```{r}
+
+GC <- read.csv("~/Desktop/432 Github/Rentrez/GC_content.csv")
+GC <- GC %>% mutate('%GC Content' = G+C)
+
+library(ggplot2)
+
+qplot(y = GC$'%GC Content', x = ID, data = GC,
+      shape=I(17), size=I(1.5), colour= Species, fill = Species, xlab = "ID", ylab = "GC Content (%)")
